@@ -125,6 +125,8 @@ spec:
               namespace:
                 nullable: true
                 type: string
+              overrideTargets:
+                type: boolean
               paused:
                 type: boolean
               resources:
