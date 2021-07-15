@@ -75,7 +75,7 @@ helm:
   # Path to any values files that need to be passed to helm during install
   valuesFiles:
     - values1.yaml
-    - values2.yaml  
+    - values2.yaml
   # Override immutable resources. This could be dangerous.
   force: false
 

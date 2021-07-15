@@ -63,6 +63,11 @@ type BundleSpec struct {
 	Resources          []BundleResource          `json:"resources,omitempty"`
 	Targets            []BundleTarget            `json:"targets,omitempty"`
 	TargetRestrictions []BundleTargetRestriction `json:"targetRestrictions,omitempty"`
+	DependsOn          []BundleRef               `json:"dependsOn,omitempty"`
+}
+
+type BundleRef struct {
+	Name string `json:"name,omitempty"`
 }
 
 type BundleResource struct {
@@ -147,10 +152,10 @@ type BundleStatus struct {
 }
 
 type ResourceKey struct {
-	Kind       string
-	APIVersion string
-	Namespace  string
-	Name       string
+	Kind       string `json:"kind,omitempty"`
+	APIVersion string `json:"apiVersion,omitempty"`
+	Namespace  string `json:"namespace,omitempty"`
+	Name       string `json:"name,omitempty"`
 }
 
 type BundleDisplay struct {
@@ -222,41 +227,10 @@ type HelmOptions struct {
 	Version        string       `json:"version,omitempty"`
 	TimeoutSeconds int          `json:"timeoutSeconds,omitempty"`
 	Values         *GenericMap  `json:"values,omitempty"`
-	ValuesFrom     []ValuesFrom `json:"valuesFrom,omitempty"`
 	Force          bool         `json:"force,omitempty"`
 	TakeOwnership  bool         `json:"takeOwnership,omitempty"`
 	MaxHistory     int          `json:"maxHistory,omitempty"`
 	ValuesFiles    []string     `json:"valuesFiles,omitempty"`
-}
-
-// Define helm values that can come from configmap, secret or external. Credit: https://github.com/fluxcd/helm-operator/blob/0cfea875b5d44bea995abe7324819432070dfbdc/pkg/apis/helm.fluxcd.io/v1/types_helmrelease.go#L439
-type ValuesFrom struct {
-	// The reference to a config map with release values.
-	// +optional
-	ConfigMapKeyRef *ConfigMapKeySelector `json:"configMapKeyRef,omitempty"`
-	// The reference to a secret with release values.
-	// +optional
-	SecretKeyRef *SecretKeySelector `json:"secretKeyRef,omitempty"`
-}
-
-type ConfigMapKeySelector struct {
-	LocalObjectReference `json:",inline"`
-	// +optional
-	Namespace string `json:"namespace,omitempty"`
-	// +optional
-	Key string `json:"key,omitempty"`
-}
-
-type SecretKeySelector struct {
-	LocalObjectReference `json:",inline"`
-	// +optional
-	Namespace string `json:"namespace,omitempty"`
-	// +optional
-	Key string `json:"key,omitempty"`
-}
-
-type LocalObjectReference struct {
-	Name string `json:"name"`
 }
 
 type BundleDeploymentSpec struct {
@@ -264,6 +238,7 @@ type BundleDeploymentSpec struct {
 	StagedDeploymentID string                  `json:"stagedDeploymentID,omitempty"`
 	Options            BundleDeploymentOptions `json:"options,omitempty"`
 	DeploymentID       string                  `json:"deploymentID,omitempty"`
+	DependsOn          []BundleRef             `json:"dependsOn,omitempty"`
 }
 
 type BundleDeploymentStatus struct {
