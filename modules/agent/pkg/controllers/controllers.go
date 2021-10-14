@@ -76,7 +76,7 @@ func (a *appContext) start(ctx context.Context) error {
 }
 
 func Register(ctx context.Context, leaderElect bool,
-	fleetNamespace, agentNamespace, defaultNamespace, clusterNamespace, clusterName string,
+	fleetNamespace, agentNamespace, defaultNamespace, agentScope, clusterNamespace, clusterName string,
 	checkinInterval time.Duration,
 	fleetConfig *rest.Config, clientConfig clientcmd.ClientConfig,
 	fleetMapper, mapper meta.RESTMapper,
@@ -93,18 +93,21 @@ func Register(ctx context.Context, leaderElect bool,
 		labelPrefix = defaultNamespace
 	}
 
-	helmDeployer, err := helmdeployer.NewHelm(agentNamespace, defaultNamespace, labelPrefix, appCtx,
-		appCtx.Core.ServiceAccount().Cache())
+	helmDeployer, err := helmdeployer.NewHelm(agentNamespace, defaultNamespace, labelPrefix, agentScope, appCtx,
+		appCtx.Core.ServiceAccount().Cache(), appCtx.Core.ConfigMap().Cache(), appCtx.Core.Secret().Cache())
 	if err != nil {
 		return err
 	}
 
 	bundledeployment.Register(ctx,
 		trigger.New(ctx, appCtx.restMapper, appCtx.Dynamic),
+		appCtx.restMapper,
+		appCtx.Dynamic,
 		deployer.NewManager(
 			fleetNamespace,
 			defaultNamespace,
 			labelPrefix,
+			agentScope,
 			appCtx.Fleet.BundleDeployment().Cache(),
 			manifest.NewLookup(appCtx.Fleet.Content()),
 			helmDeployer,
